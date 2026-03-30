@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ariana's Notes ☁️✨</title>
+    <style>
+        body {
+            margin: 0; background: #f3e5f5; font-family: 'Segoe UI', sans-serif;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+        }
+        #quiz-container {
+            background: white; padding: 30px; border-radius: 30px;
+            box-shadow: 0 15px 40px rgba(142, 36, 170, 0.2);
+            text-align: center; width: 350px; border: 2px solid #e1bee7;
+        }
+        h1 { color: #8e24aa; font-size: 24px; margin-bottom: 10px; }
+        .ariana-img { width: 100px; height: 100px; border-radius: 50%; border: 3px solid #ce93d8; margin-bottom: 20px; }
+        
+        #audio-btn {
+            background: #ab47bc; color: white; border: none; padding: 15px 30px;
+            border-radius: 50px; cursor: pointer; font-size: 18px; margin-bottom: 20px;
+            transition: 0.3s; width: 100%; font-weight: bold;
+        }
+        #audio-btn:hover { background: #8e24aa; transform: scale(1.05); }
+
+        .option-btn {
+            background: white; border: 2px solid #f3e5f5; padding: 12px;
+            width: 100%; margin: 8px 0; border-radius: 15px; cursor: pointer;
+            transition: 0.2s; font-size: 16px; color: #4a148c;
+        }
+        .option-btn:hover { background: #f3e5f5; border-color: #ce93d8; }
+        
+        #score-display { margin-top: 20px; font-weight: bold; color: #7b1fa2; }
+    </style>
+</head>
+<body>
+
+<div id="quiz-container">
+    <h1>Ariana's Notes 🎙️</h1>
+    <p style="color: #9c27b0;">Şarkıyı tahmin edebilir misin?</p>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/d/dd/Ariana_Grande_Grammys_Red_Carpet_2020.jpg" class="ariana-img" alt="Ariana">
+    
+    <button id="audio-btn" onclick="playMusic()">▶️ Şarkıyı Dinle</button>
+    
+    <div id="options">
+        </div>
+
+    <div id="score-display">Puan: 0</div>
+</div>
+
+<script>
+    // Şarkı Listesi (Önizleme Linkleri Apple Music'ten)
+    const songs = [
+        { name: "7 Rings", url: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/91/92/75/919275f4-3486-16e6-1463-6d0046b0a969/mzaf_3990885564883461271.plus.aac.p.m4a" },
+        { name: "Positions", url: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview114/v4/93/e0/75/93e07567-5d25-9786-631d-7243c52a0a20/mzaf_11306898859062323862.plus.aac.p.m4a" },
+        { name: "Thank U, Next", url: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/6e/0a/61/6e0a6184-f06b-73a4-846f-570a91e57c8d/mzaf_10526715694241619811.plus.aac.p.m4a" },
+        { name: "Side To Side", url: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/33/c4/47/33c44795-037c-f903-7b10-2e4530006798/mzaf_7820138942636500735.plus.aac.p.m4a" }
+    ];
+
+    let currentSong;
+    let score = 0;
+    let audio = new Audio();
+
+    function loadQuestion() {
+        // Rastgele bir şarkı seç
+        currentSong = songs[Math.floor(Math.random() * songs.length)];
+        audio.src = currentSong.url;
+        
+        const optionsDiv = document.getElementById('options');
+        optionsDiv.innerHTML = ''; // Eski şıkları temizle
+
+        // Şıkları oluştur
+        songs.forEach(song => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = song.name;
+            btn.onclick = () => checkAnswer(song.name);
+            optionsDiv.appendChild(btn);
+        });
+    }
+
+    function playMusic() {
+        audio.play();
+    }
+
+    function checkAnswer(answer) {
+        audio.pause();
+        if (answer === currentSong.name) {
+            score += 10;
+            alert("Doğru! ✨ Sen tam bir Arianator'sın!");
+        } else {
+            alert("Ah, yanlış! Bu şarkı " + currentSong.name + " idi. ☁️");
+        }
+        document.getElementById('score-display').innerText = "Puan: " + score;
+        loadQuestion();
+    }
+
+    // İlk soruyu yükle
+    loadQuestion();
+</script>
+
+</body>
+</html>
