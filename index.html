@@ -3,91 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ariana's Notes ☁️✨</title>
+    <title>Ariana's Notes 🎙️✨</title>
     <style>
-        body {
-            margin: 0; background: #f3e5f5; font-family: 'Segoe UI', sans-serif;
-            display: flex; justify-content: center; align-items: center; min-height: 100vh;
-        }
-        #quiz-container {
-            background: white; padding: 30px; border-radius: 35px;
-            box-shadow: 0 15px 45px rgba(142, 36, 170, 0.2);
-            text-align: center; width: 340px; border: 2px solid #e1bee7;
-        }
-        h1 { color: #8e24aa; font-size: 26px; margin-bottom: 5px; }
-        .subtitle { color: #9c27b0; font-size: 14px; margin-bottom: 20px; font-weight: 500; }
-        
-        .ariana-img { 
-            width: 120px; height: 120px; border-radius: 50%; 
-            border: 4px solid #ce93d8; margin-bottom: 20px;
-            object-fit: cover;
-        }
-        
-        #audio-btn {
-            background: #ab47bc; color: white; border: none; padding: 18px;
-            border-radius: 20px; cursor: pointer; font-size: 18px; margin-bottom: 20px;
-            transition: 0.3s; width: 100%; font-weight: bold;
-            box-shadow: 0 5px 15px rgba(171, 71, 188, 0.3);
-        }
-        #audio-btn:active { transform: scale(0.95); }
-
-        .option-btn {
-            background: #f8f0f9; border: 2px solid transparent; padding: 14px;
-            width: 100%; margin: 8px 0; border-radius: 18px; cursor: pointer;
-            transition: 0.2s; font-size: 16px; color: #4a148c; font-weight: 600;
-        }
+        body { margin: 0; background: #f3e5f5; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        #quiz-container { background: white; padding: 30px; border-radius: 35px; box-shadow: 0 15px 45px rgba(142, 36, 170, 0.2); text-align: center; width: 340px; border: 2px solid #e1bee7; }
+        h1 { color: #8e24aa; font-size: 26px; margin-bottom: 20px; }
+        .ariana-img { width: 120px; height: 120px; border-radius: 50%; border: 4px solid #ce93d8; margin-bottom: 20px; object-fit: cover; }
+        #audio-btn { background: #ab47bc; color: white; border: none; padding: 18px; border-radius: 20px; cursor: pointer; font-size: 18px; margin-bottom: 20px; width: 100%; font-weight: bold; transition: 0.3s; }
+        #audio-btn:hover { background: #8e24aa; }
+        .option-btn { background: #f8f0f9; border: 2px solid transparent; padding: 14px; width: 100%; margin: 8px 0; border-radius: 18px; cursor: pointer; font-size: 16px; color: #4a148c; font-weight: 600; transition: 0.2s; }
         .option-btn:hover { background: #f3e5f5; border-color: #ce93d8; }
-        
         #score-display { margin-top: 25px; font-weight: bold; color: #7b1fa2; font-size: 18px; }
+        /* YouTube oynatıcısını gizliyoruz */
+        #youtube-player { display: none; }
     </style>
 </head>
 <body>
 
 <div id="quiz-container">
     <h1>Ariana's Notes 🎙️</h1>
-    <div class="subtitle">Hangi şarkı çalıyor?</div>
-    <img src="https://i.pinimg.com/originals/9e/7b/9e/9e7b9e0f3e6e8e8e8e8e8e8e8e8e8e8e.jpg" class="ariana-img" alt="Ariana">
+    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Ariana" class="ariana-img" alt="Ariana">
     
     <button id="audio-btn" onclick="playMusic()">🎵 Şarkıyı Dinle</button>
     
     <div id="options"></div>
-
     <div id="score-display">Skor: 0</div>
 </div>
 
+<div id="youtube-player"></div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
 <script>
-    // Yeni ve güncel ses linkleri
-    const songs = [
-        { name: "7 Rings", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" }, // Örnek test sesi (Değiştirebilirsin)
-        { name: "Positions", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
-        { name: "Thank U, Next", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
-        { name: "Side To Side", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" }
-    ];
-
-    // Gerçek Ariana linkleri bazen tarayıcıda bloklanabiliyor. 
-    // Eğer yukarıdaki test sesleri çalarsa, sorun linklerin formatındadır.
-    // Şarkıları şu an daha stabil linklerle güncelledim:
-    const realArianaSongs = [
-        { name: "7 Rings", url: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/91/92/75/919275f4-3486-16e6-1463-6d0046b0a969/mzaf_3990885564883461271.plus.aac.p.m4a" },
-        { name: "Positions", url: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview114/v4/93/e0/75/93e07567-5d25-9786-631d-7243c52a0a20/mzaf_11306898859062323862.plus.aac.p.m4a" },
-        { name: "Dangerous Woman", url: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/3c/62/3c/3c623c2a-605b-8012-70b1-382a4d0e5f27/mzaf_6777174665809706338.plus.aac.p.m4a" },
-        { name: "No Tears Left To Cry", url: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/9e/a5/d2/9ea5d28a-76f5-045a-694a-89a30485a3a7/mzaf_4725350435422891963.plus.aac.p.m4a" }
-    ];
-
+    let player;
     let currentSong;
     let score = 0;
-    let audio = new Audio();
-    audio.volume = 0.5;
+
+    const songs = [
+        { name: "7 Rings", id: "QYh6mYIJG2Y", start: 70 },
+        { name: "Thank U, Next", id: "gl1aHhXnN1k", start: 50 },
+        { name: "Positions", id: "tcYodQoapMg", start: 40 },
+        { name: "Side To Side", id: "SXiSVQZLje8", start: 60 },
+        { name: "God is a woman", id: "kHLHSlExFis", start: 80 }
+    ];
+
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('youtube-player', {
+            height: '0', width: '0',
+            videoId: '',
+            events: { 'onReady': loadQuestion }
+        });
+    }
 
     function loadQuestion() {
-        currentSong = realArianaSongs[Math.floor(Math.random() * realArianaSongs.length)];
-        audio.src = currentSong.url;
-        audio.load(); // Sesi önceden yükle
-        
+        currentSong = songs[Math.floor(Math.random() * songs.length)];
+        player.cueVideoById({
+            videoId: currentSong.id,
+            startSeconds: currentSong.start
+        });
+
         const optionsDiv = document.getElementById('options');
         optionsDiv.innerHTML = '';
-
-        realArianaSongs.forEach(song => {
+        songs.forEach(song => {
             const btn = document.createElement('button');
             btn.className = 'option-btn';
             btn.innerText = song.name;
@@ -97,26 +73,22 @@
     }
 
     function playMusic() {
-        // Kullanıcı butona bastığında çalması tarayıcı engelini aşar
-        audio.play().catch(error => {
-            console.log("Müzik çalma hatası:", error);
-            alert("Lütfen önce sayfada bir yere tıkla, sonra dinle butonuna bas!");
-        });
+        player.playVideo();
+        // 5 saniye sonra otomatik durdur (Tahmin etmesi zor olsun!)
+        setTimeout(() => { player.pauseVideo(); }, 5000);
     }
 
     function checkAnswer(answer) {
-        audio.pause();
+        player.pauseVideo();
         if (answer === currentSong.name) {
             score += 10;
-            alert("Harika! ✨ Doğru tahmin.");
+            alert("Harika! ✨ Doğru.");
         } else {
-            alert("Yanlış! Bu " + currentSong.name + " şarkısıydı. ☁️");
+            alert("Yanlış! Bu " + currentSong.name + " idi. ☁️");
         }
         document.getElementById('score-display').innerText = "Skor: " + score;
         loadQuestion();
     }
-
-    loadQuestion();
 </script>
 
 </body>
