@@ -16,7 +16,7 @@
         }
 
         #quiz-container { 
-            background: rgba(255, 255, 255, 0.8); 
+            background: rgba(255, 255, 255, 0.85); 
             backdrop-filter: blur(10px);
             padding: 40px; 
             border-radius: 40px; 
@@ -48,7 +48,10 @@
             width: 100%; 
             font-weight: bold; 
             box-shadow: 0 5px 15px rgba(171, 71, 188, 0.3);
+            transition: 0.3s;
         }
+
+        #audio-btn:disabled { background: #ce93d8; cursor: not-allowed; }
 
         .option-btn { 
             background: white; 
@@ -61,11 +64,14 @@
             font-size: 15px; 
             color: #6a1b9a; 
             font-weight: 600; 
+            transition: 0.2s;
         }
 
-        #score-display { margin-top: 20px; font-weight: 800; color: #4a148c; }
+        .option-btn:hover { background: #fdf7ff; border-color: #ab47bc; }
+
+        #score-display { margin-top: 20px; font-weight: 800; color: #4a148c; font-size: 18px; }
+        #track-info { font-size: 12px; color: #8e24aa; margin-bottom: 10px; opacity: 0.7; }
         
-        /* Oynatıcıyı tamamen görünmez yapıyoruz ama silmiyoruz */
         #player-wrapper { position: absolute; top: -9999px; left: -9999px; }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
@@ -74,9 +80,10 @@
 
 <div id="quiz-container">
     <h1>Ariana's Notes 🎙️</h1>
+    <div id="track-info">Yükleniyor...</div>
     <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Ariana" class="ariana-img">
     
-    <button id="audio-btn" onclick="playMusic()">🎵 YÜKLENİYOR...</button>
+    <button id="audio-btn" onclick="playMusic()" disabled>🎵 HAZIRLANIYOR...</button>
     
     <div id="options"></div>
     <div id="score-display">SKOR: 0</div>
@@ -89,43 +96,51 @@
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
     let player;
-    let currentSong;
+    let currentSongIndex = 0; // Sıralı takip için index
     let score = 0;
     let apiReady = false;
 
+    // Şarkı listesi (Güncellendi ve God is a Woman eklendi)
     const songs = [
         { name: "7 Rings", id: "QYh6mYIJG2Y", start: 70 },
         { name: "Thank U, Next", id: "gl1aHhXnN1k", start: 50 },
         { name: "Positions", id: "tcYodQoapMg", start: 40 },
         { name: "Side To Side", id: "SXiSVQZLje8", start: 60 },
-        { name: "God is a woman", id: "kHLHSlExFis", start: 80 }
+        { name: "God is a woman", id: "kHLHSlExFis", start: 80 },
+        { name: "No Tears Left to Cry", id: "ffxKSjUwKdU", start: 55 }
     ];
 
     function onYouTubeIframeAPIReady() {
         player = new YT.Player('youtube-player', {
             height: '0', width: '0',
-            playerVars: { 'autoplay': 0, 'controls': 0, 'disablekb': 1 },
+            playerVars: { 'autoplay': 0, 'controls': 0, 'disablekb': 1, 'origin': window.location.origin },
             events: { 
-                'onReady': onPlayerReady,
-                'onStateChange': onPlayerStateChange
+                'onReady': onPlayerReady
             }
         });
     }
 
     function onPlayerReady() {
         apiReady = true;
-        document.getElementById('audio-btn').innerText = "▶ ŞARKIYI DİNLE";
+        const btn = document.getElementById('audio-btn');
+        btn.disabled = false;
+        btn.innerText = "▶ ŞARKIYI DİNLE";
         loadQuestion();
     }
 
     function loadQuestion() {
-        currentSong = songs[Math.floor(Math.random() * songs.length)];
-        // cueVideoById yerine videoyu sessizce arkada hazırlıyoruz
+        const currentSong = songs[currentSongIndex];
+        
+        // Şarkıyı arkada hazırla
         player.cueVideoById({
             videoId: currentSong.id,
             startSeconds: currentSong.start
         });
 
+        // Track bilgisini güncelle (Kaçıncı şarkıdayız)
+        document.getElementById('track-info').innerText = `Şarkı: ${currentSongIndex + 1} / ${songs.length}`;
+
+        // Seçenekleri oluştur
         const optionsDiv = document.getElementById('options');
         optionsDiv.innerHTML = '';
         songs.forEach(song => {
@@ -140,32 +155,41 @@
     function playMusic() {
         if (!apiReady) return;
         
-        // Bazı tarayıcılarda ilk tıklamada ses açılmasına izin vermek için
         player.unMute();
         player.setVolume(100);
         player.playVideo();
 
-        document.getElementById('audio-btn').innerText = "🔊 ÇALIYOR...";
+        const btn = document.getElementById('audio-btn');
+        btn.innerText = "🔊 DİNLENİYOR...";
+        btn.disabled = true;
         
         setTimeout(() => { 
             player.pauseVideo(); 
-            document.getElementById('audio-btn').innerText = "▶ TEKRAR DİNLE";
+            btn.innerText = "▶ TEKRAR DİNLE";
+            btn.disabled = false;
         }, 5000);
     }
 
-    function onPlayerStateChange(event) {
-        // Eğer video bir sebeple başlamazsa veya biterse diye kontrol eklenebilir
-    }
-
     function checkAnswer(answer) {
+        const currentSong = songs[currentSongIndex];
         player.pauseVideo();
+
         if (answer === currentSong.name) {
             score += 10;
             alert("DOĞRU! ✨");
         } else {
-            alert("YANLIŞ! Cevap: " + currentSong.name);
+            alert("YANLIŞ! Bu '" + currentSong.name + "' idi. ☁️");
         }
+
         document.getElementById('score-display').innerText = "SKOR: " + score;
+        
+        // SIRALI GEÇİŞ MANTIĞI:
+        currentSongIndex++; 
+        if (currentSongIndex >= songs.length) {
+            currentSongIndex = 0; // Liste biterse başa dön
+            alert("Tüm şarkıları bitirdin! En başa dönüyoruz. 🎀");
+        }
+
         document.getElementById('audio-btn').innerText = "▶ YENİ ŞARKIYI DİNLE";
         loadQuestion();
     }
