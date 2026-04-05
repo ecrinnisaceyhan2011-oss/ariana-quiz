@@ -5,29 +5,114 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ariana's Notes 🎙️✨</title>
     <style>
-        body { margin: 0; background: #f3e5f5; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        #quiz-container { background: white; padding: 30px; border-radius: 35px; box-shadow: 0 15px 45px rgba(142, 36, 170, 0.2); text-align: center; width: 340px; border: 2px solid #e1bee7; }
-        h1 { color: #8e24aa; font-size: 26px; margin-bottom: 20px; }
-        .ariana-img { width: 120px; height: 120px; border-radius: 50%; border: 4px solid #ce93d8; margin-bottom: 20px; object-fit: cover; }
-        #audio-btn { background: #ab47bc; color: white; border: none; padding: 18px; border-radius: 20px; cursor: pointer; font-size: 18px; margin-bottom: 20px; width: 100%; font-weight: bold; transition: 0.3s; }
-        #audio-btn:hover { background: #8e24aa; }
-        .option-btn { background: #f8f0f9; border: 2px solid transparent; padding: 14px; width: 100%; margin: 8px 0; border-radius: 18px; cursor: pointer; font-size: 16px; color: #4a148c; font-weight: 600; transition: 0.2s; }
-        .option-btn:hover { background: #f3e5f5; border-color: #ce93d8; }
-        #score-display { margin-top: 25px; font-weight: bold; color: #7b1fa2; font-size: 18px; }
-        /* YouTube oynatıcısını gizliyoruz */
+        /* Modern ve estetik arka plan (Gradient + Glassmorphism) */
+        body { 
+            margin: 0; 
+            background: linear-gradient(135deg, #fce4ec 0%, #f3e5f5 50%, #e1f5fe 100%); 
+            font-family: 'Poppins', sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        #quiz-container { 
+            background: rgba(255, 255, 255, 0.7); 
+            backdrop-filter: blur(15px);
+            padding: 40px; 
+            border-radius: 40px; 
+            box-shadow: 0 20px 60px rgba(142, 36, 170, 0.15); 
+            text-align: center; 
+            width: 360px; 
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            position: relative;
+        }
+
+        /* Ariana'nın imzası olan bulutlar ve yıldızlar için süsleme */
+        #quiz-container::before {
+            content: "☁️"; position: absolute; top: -20px; left: -20px; font-size: 40px; opacity: 0.6;
+        }
+
+        h1 { 
+            color: #7b1fa2; 
+            font-size: 28px; 
+            margin-bottom: 25px; 
+            letter-spacing: -1px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .ariana-img { 
+            width: 130px; height: 130px; 
+            border-radius: 50%; 
+            border: 5px solid white; 
+            box-shadow: 0 10px 25px rgba(123, 31, 162, 0.2);
+            margin-bottom: 25px; 
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .ariana-img:hover { transform: scale(1.05) rotate(5deg); }
+
+        #audio-btn { 
+            background: linear-gradient(45deg, #ab47bc, #ce93d8); 
+            color: white; 
+            border: none; 
+            padding: 18px; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            margin-bottom: 25px; 
+            width: 100%; 
+            font-weight: 700; 
+            box-shadow: 0 8px 20px rgba(171, 71, 188, 0.3);
+            transition: 0.3s; 
+        }
+        #audio-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(171, 71, 188, 0.4); }
+
+        .option-btn { 
+            background: white; 
+            border: 2px solid #f3e5f5; 
+            padding: 15px; 
+            width: 100%; 
+            margin: 10px 0; 
+            border-radius: 20px; 
+            cursor: pointer; 
+            font-size: 15px; 
+            color: #6a1b9a; 
+            font-weight: 600; 
+            transition: all 0.2s ease;
+        }
+        .option-btn:hover { 
+            background: #fdf7ff; 
+            border-color: #ce93d8; 
+            transform: translateX(5px);
+        }
+
+        #score-display { 
+            margin-top: 30px; 
+            font-weight: 800; 
+            color: #4a148c; 
+            font-size: 20px;
+            background: #f3e5f5;
+            display: inline-block;
+            padding: 5px 20px;
+            border-radius: 15px;
+        }
+
         #youtube-player { display: none; }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <div id="quiz-container">
     <h1>Ariana's Notes 🎙️</h1>
-    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Ariana" class="ariana-img" alt="Ariana">
+    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Ariana&backgroundColor=f3e5f5" class="ariana-img" alt="Ariana">
     
-    <button id="audio-btn" onclick="playMusic()">🎵 Şarkıyı Dinle</button>
+    <button id="audio-btn" onclick="playMusic()">▶ SHUFFLE & LISTEN</button>
     
     <div id="options"></div>
-    <div id="score-display">Skor: 0</div>
+    <div id="score-display">SCORE: 0</div>
 </div>
 
 <div id="youtube-player"></div>
@@ -37,31 +122,35 @@
     let player;
     let currentSong;
     let score = 0;
+    let isPlaying = false;
 
     const songs = [
         { name: "7 Rings", id: "QYh6mYIJG2Y", start: 70 },
         { name: "Thank U, Next", id: "gl1aHhXnN1k", start: 50 },
         { name: "Positions", id: "tcYodQoapMg", start: 40 },
         { name: "Side To Side", id: "SXiSVQZLje8", start: 60 },
-        { name: "God is a woman", id: "kHLHSlExFis", start: 80 }
+        { name: "God is a woman", id: "kHLHSlExFis", start: 80 },
+        { name: "No Tears Left to Cry", id: "ffxKSjUwKdU", start: 55 }
     ];
 
     function onYouTubeIframeAPIReady() {
         player = new YT.Player('youtube-player', {
             height: '0', width: '0',
-            videoId: '',
+            playerVars: { 'autoplay': 0, 'controls': 0 },
             events: { 'onReady': loadQuestion }
         });
     }
 
     function loadQuestion() {
+        const optionsDiv = document.getElementById('options');
+        optionsDiv.style.pointerEvents = 'auto'; // Butonları aktif et
+        
         currentSong = songs[Math.floor(Math.random() * songs.length)];
         player.cueVideoById({
             videoId: currentSong.id,
             startSeconds: currentSong.start
         });
 
-        const optionsDiv = document.getElementById('options');
         optionsDiv.innerHTML = '';
         songs.forEach(song => {
             const btn = document.createElement('button');
@@ -73,21 +162,33 @@
     }
 
     function playMusic() {
+        if(isPlaying) return;
+        isPlaying = true;
         player.playVideo();
-        // 5 saniye sonra otomatik durdur (Tahmin etmesi zor olsun!)
-        setTimeout(() => { player.pauseVideo(); }, 5000);
+        
+        // 5 saniye sonra durdur
+        setTimeout(() => { 
+            player.pauseVideo(); 
+            isPlaying = false;
+        }, 5000);
     }
 
     function checkAnswer(answer) {
         player.pauseVideo();
+        const optionsDiv = document.getElementById('options');
+        optionsDiv.style.pointerEvents = 'none'; // Çift tıklamayı engelle
+
         if (answer === currentSong.name) {
             score += 10;
-            alert("Harika! ✨ Doğru.");
+            alert("Yuhhh! Tam bir Arianator! ✨");
         } else {
-            alert("Yanlış! Bu " + currentSong.name + " idi. ☁️");
+            alert("Üzgünüm tatlım... Doğru cevap: " + currentSong.name + " ☁️");
         }
-        document.getElementById('score-display').innerText = "Skor: " + score;
-        loadQuestion();
+        
+        document.getElementById('score-display').innerText = "SCORE: " + score;
+        
+        // Kısa bir bekleme sonra yeni soruya geç
+        setTimeout(loadQuestion, 500);
     }
 </script>
 
